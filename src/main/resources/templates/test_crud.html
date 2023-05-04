@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<body>
+
+<button id="boutonDeconnexion" class="hidden" onclick="deconnexion()">Deconnexion</button>
+
+<form id="formulaireConnexion" onsubmit="return connexion()">
+    <input id="email">
+    <input id="password" type="password">
+    <input type="submit" value="connexion">
+</form>
+
+<script>
+
+    function deconnexion() {
+        localStorage.removeItem("jwt")
+        refresh()
+    }
+
+    function connexion() {
+
+        const user = {
+            email: document.querySelector("#email").value,
+            password: document.querySelector("#password").value,
+        }
+
+        const json = JSON.stringify(user);
+
+        const enTete = new Headers();
+        enTete.set("Content-Type", "application/json");
+
+        fetch("http://localhost:8080/connexion", {
+            method: "POST",
+            body: json,
+            headers: enTete,
+        })
+            .then((resultat) => {
+                if(resultat.ok) {
+                    return resultat.text()
+                } else {
+                    return Promise.reject(resultat)
+                }
+
+            })
+            .then((jwt) => {
+                //Systeme de connexion
+                localStorage.setItem("jwt", jwt)
+                alert("Vous etes connecté")
+                refresh();
+
+            })
+            .catch((error) => console.log("Mauvais login / mdp"));
+
+        return false;
+    }
+</script>
+
+<form id="formulaireAjoutUser" class="hidden" onsubmit="return addUser()">
+    <input id="firstName" type="text">
+    <input id="name" type="text">
+    <select id="pays"></select>
+    <input type="submit" value="Ajouter l'utilisateur">
+</form>
+
+<ul class="hidden" id="list-users"></ul>
+
+<script>
+
+
+    const selectPays = document.querySelector("#pays")
+
+
+    function addUser() {
+
+        //On recup les champs dans le DOM
+        const fieldFirstName = document.querySelector("#firstName");
+        const fieldName = document.querySelector("#name");
+
+        //On creait un objet user avec les valeur des champs
+        const user = {
+            firstName: fieldFirstName.value,
+            name: fieldName.value,
+            pays: {
+                id: selectPays.value
+            }
+        };
+
+        const json = JSON.stringify(user);
+
+
+        const enTete = new Headers();
+        enTete.set("Content-Type", "application/json");
+        enTete.set("Authorization", "Bearer " + localStorage.getItem("jwt"));
+
+        fetch("http://localhost:8080/admin/user", {
+            method: "POST",
+            body: json,
+            headers: enTete
+        }).then((result) => refresh());
+
+        return false;
+    }
+
+
+    const baliseUL = document.querySelector("#list-users")
+    const boutonDeconnexion = document.querySelector("#boutonDeconnexion")
+    const formulaireAjoutUser = document.querySelector("#formulaireAjoutUser")
+    const formulaireConnexion = document.querySelector("#formulaireConnexion")
+
+    function refresh() {
+
+        //Si user est connecte
+        if (localStorage.getItem("jwt")) {
+
+            baliseUL.classList.remove("hidden")
+            boutonDeconnexion.classList.remove("hidden")
+            formulaireAjoutUser.classList.remove("hidden")
+            formulaireConnexion.classList.add("hidden")
+
+
+            baliseUL.innerHTML = "";
+
+            const headers = new Headers();
+            headers.set("Authorization", "Bearer " + localStorage.getItem("jwt"));
+
+            fetch("http://localhost:8080/admin/payss", {headers: headers})
+                .then((result) => result.json())
+                .then((listPayss) => {
+
+                    listPayss.forEach((pays) => {
+                        const option = document.createElement("option");
+                        option.innerHTML = pays.name;
+                        option.value = pays.id;
+                        selectPays.appendChild(option);
+                    });
+                });
+
+
+            fetch("http://localhost:8080/admin/users", {headers: headers})
+                .then(response => response.json())
+                .then(users => {
+                    users.forEach(element => {
+                        const baliseLi = document.createElement("li")
+                        baliseLi.innerHTML = `<span>${element.firstName} ${element.name} ${element.pays.name}</span>`
+
+                        const deleteButton = document.createElement("button");
+                        deleteButton.innerHTML = "X"
+                        baliseLi.appendChild(deleteButton)
+
+                        deleteButton.addEventListener("click", e => {
+                            fetch("http://localhost:8080/user/" + element.id, {method: "DELETE", headers: headers})
+                                .then(resultat => refresh());
+
+                        })
+                        baliseUL.appendChild(baliseLi)
+                    });
+                });
+        } else {
+            //si user est deconnecte
+            baliseUL.classList.add("hidden")
+            boutonDeconnexion.classList.add("hidden")
+            formulaireAjoutUser.classList.add("hidden")
+            formulaireConnexion.classList.remove("hidden")
+
+        }
+    }
+
+    refresh();
+
+</script>
+</body>
+</html>
