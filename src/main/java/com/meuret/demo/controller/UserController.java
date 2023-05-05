@@ -45,19 +45,7 @@ public class UserController {
     @GetMapping("/users")
     @JsonView(VueUtilisateur.class)
     public List<User> getUser() {
-//        User toto = new User();
-//        toto.setId(20);
-//        toto.setName("Toto");
-//        toto.setFirstName("Titi");
-//
-//        User titi = new User();
-//        titi.setId(30);
-//        titi.setName("Titi");
-//        titi.setFirstName("Tata");
 
-//        ArrayList<User> listUsers = new ArrayList<>();
-//        listUsers.add(toto);
-//        listUsers.add(titi);
 
         List<User> listUsers = userDao.findAll();
         return listUsers;
