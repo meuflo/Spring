@@ -40,7 +40,7 @@
         const enTete = new Headers();
         enTete.set("Content-Type", "application/json");
 
-        fetch("http://localhost:8080/connexion", {
+        fetch("http://localhost:pays/connexion", {
             method: "POST",
             body: json,
             headers: enTete,
@@ -103,7 +103,7 @@
         enTete.set("Content-Type", "application/json");
         enTete.set("Authorization", "Bearer " + localStorage.getItem("jwt"));
 
-        fetch("http://localhost:8080/admin/user", {
+        fetch("http://localhost:pays/admin/user", {
             method: "POST",
             body: json,
             headers: enTete

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,9 @@ import java.util.Map;
 
 @Service
 public class JwtUtils {
+
+    @Value("${jwt.secret}")
+    String jwtSecret;
 
     public String generateJwt(MyUserDetails userDetails) {
 //si erreur : java.lang.IllegalStateException: Either 'payload' or 'claims' must be specified.
@@ -34,7 +38,7 @@ public class JwtUtils {
                     .setClaims(donnees)
                     .setSubject(userDetails.getUsername())
                    // .setClaims(payload)
-                    .signWith(SignatureAlgorithm.HS256, "azerty")
+                    .signWith(SignatureAlgorithm.HS256, jwtSecret)
                     .compact();
 
 
@@ -42,7 +46,7 @@ public class JwtUtils {
 
     public Claims getData(String jwt) {
         return Jwts.parser()
-                .setSigningKey("azerty")
+                .setSigningKey(jwtSecret)
                 .parseClaimsJws(jwt)
                 .getBody();
     }
