@@ -14,7 +14,8 @@ import java.util.Optional;
 public interface UserDao extends JpaRepository<User, Integer> {
     User findByFirstName(String firstName);
 
-    Optional<User> findByEmail(String email);
+    @Query("FROM User U join fetch U.roles WHERE U.email = :email")
+    Optional<User> findByEmail(@Param("email")String email);
 
     @Query("FROM User U JOIN U.pays P WHERE P.name = ?1")
     List<User> trouverutilisateurSelonPays(@Param("pays") String pays);

@@ -12,10 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -45,8 +42,9 @@ public class User {
     private String password;
 
     @JsonView({VueUtilisateur.class, VueEntreprise.class})
-    @ManyToOne
-    private Role role;
+    @ManyToMany
+    @JoinTable(name = "role_users", inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles;
 
     @JsonView(VueUtilisateur.class)
     private int age;
@@ -74,9 +72,5 @@ public class User {
     @UpdateTimestamp
     @JsonView(VueUtilisateur.class)
     private LocalDate updatedAt;
-
-
-
-
 
 }

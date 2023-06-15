@@ -1,5 +1,6 @@
 package com.meuret.demo.security;
 
+import com.meuret.demo.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -29,10 +30,18 @@ public class JwtUtils {
 
        // payload.put("test", "test");
 
+        String roles ="";
+         for(Role role : userDetails.getUser().getRoles()) {
+             roles += role.getName() + ",";
+         }
+
+
         Map<String, Object> donnees = new HashMap<>();
         donnees.put("firstName", userDetails.getUser().getFirstName());
         donnees.put("name", userDetails.getUser().getName());
-        donnees.put("role", userDetails.getUser().getRole().getName());
+        donnees.put("roles", roles);
+
+
 
         return Jwts.builder()
                     .setClaims(donnees)

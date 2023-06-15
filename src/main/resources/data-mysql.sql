@@ -1,6 +1,7 @@
 INSERT INTO `role` (`id`, `name`)
 VALUES (1, 'ROLE_UTILISATEUR'),
-       (2, 'ROLE_ADMINISTRATEUR');
+       (2, 'ROLE_ADMINISTRATEUR'),
+       (3, 'ROLE_SUPER_ADMINISTRATEUR');
 
 INSERT INTO pays(name)
 VALUES ('France'),
@@ -12,13 +13,19 @@ VALUES ('Amazon'),
        ('Google'),
        ('Red Hat');
 
-INSERT INTO user(first_name, name, age, pays_id, entreprise_id, email, password, role_id, created_at, updated_at)
-VALUES ('Toto', 'TUTU', 5, 1, 1, 'a@a.com', '$2a$10$wXW2wHA2bu1TdQ26p.2UoehWv8m92w88kabSeL.348VqkpWvSt51q', 2,
+INSERT INTO user(first_name, name, age, pays_id, entreprise_id, email, password, created_at, updated_at)
+VALUES ('Toto', 'TUTU', 5, 1, 1, 'a@a.com', '$2a$10$wXW2wHA2bu1TdQ26p.2UoehWv8m92w88kabSeL.348VqkpWvSt51q',
         UTC_TIMESTAMP(), UTC_TIMESTAMP()),
-       ('Titi', 'SMITH', 10, 2, 2, 'b@b.com', '$2a$10$wXW2wHA2bu1TdQ26p.2UoehWv8m92w88kabSeL.348VqkpWvSt51q', 1,
+       ('Titi', 'SMITH', 10, 2, 2, 'b@b.com', '$2a$10$wXW2wHA2bu1TdQ26p.2UoehWv8m92w88kabSeL.348VqkpWvSt51q',
         UTC_TIMESTAMP(), UTC_TIMESTAMP()),
-       ('Tata', 'SMITH', 15, 3, 3, 'c@c.com', '$2a$10$wXW2wHA2bu1TdQ26p.2UoehWv8m92w88kabSeL.348VqkpWvSt51q', 1,
+       ('Tata', 'SMITH', 15, 3, 3, 'c@c.com', '$2a$10$wXW2wHA2bu1TdQ26p.2UoehWv8m92w88kabSeL.348VqkpWvSt51q',
         UTC_TIMESTAMP(), UTC_TIMESTAMP());
+
+INSERT INTO role_users (user_id, role_id) VALUES
+                                                           (1, 1),
+                                                           (2, 1),
+                                                           (2, 2),
+                                                           (3, 3);
 
 INSERT INTO `contrat` (`id`, `date_de_creation`, `date_de_retour`)
 VALUES (1, '2023-05-09', '2023-05-11'),

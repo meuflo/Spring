@@ -165,7 +165,7 @@ public class UserController {
 
         Role role = new Role();
         role.setId(1);
-        newUser.setRole(role);
+        newUser.getRoles().add(role);
 
         String passwordHache = passwordEncoder.encode("root");
         newUser.setPassword(passwordHache);
